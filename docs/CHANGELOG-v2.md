@@ -221,3 +221,29 @@ python3 scripts/render_frames.py index.html review/ --duration 130 --motion 61.5
 - 第 2 步剧本：字幕稿完成后跑 `check_density.py`。
 - 第 6 步渲染：用 `--pipe` 直出无声片；修复只重渲对应段。
 - 第 7 步自检：修复重渲按 `performance.md` 的范围对照表执行。
+
+
+---
+
+# v2.4 追加说明
+
+> 学习 Remotion 官方最佳实践技能（remotion-best-practices）的**流程与工程原则**后，以原创表述融入本仓库。未复制其任何文本。
+
+## 新增：`references/remotion-track.md`（Remotion 路线）
+
+把本仓库的方法论与 Remotion 技术对接的完整对照文档：
+
+- **何时选 Remotion**：剪辑真实素材、复杂文字排版、参数化模板选它；纯代码直出走 Canvas 默认路线。
+- **心智模型对照表**：`render(t)` ↔ `useCurrentFrame()`；秒→帧一律经 `useVideoConfig().fps`；`seg/ss` ↔ `interpolate + clamp`；站函数 ↔ 场景组件；固定种子纪律两边一致；**CSS transition/animation 两边都禁**（帧渲染出不正确）。
+- **跑片流程**：脚手架 → **预览先行（Studio 第一时间开、边写边给用户看）** → 场景组件化 → `TransitionSeries` 编排相邻场景转场（转场缩短总时长，编排要计入）→ `render --frames` 抽帧检查 → 全片渲染。
+- **工程化红利**：官方字体包阻塞加载（根治"前几帧回退字体"）、文本测量/自动适配（把"量最长字幕"变成代码保证）、`calculateMetadata` 动态时长、Zod schema 参数化模板（一次搭台期期复用）、`npx remotion add` 装包。
+- **与质量门对接**：三问/六画法/密度红线/看图改图原样执行；模拟仍放纯函数模块固定种子。
+
+## 从其流程借鉴的两条纪律（已写入 SKILL.md / AGENTS.md）
+
+1. **预览先行**（第 5 步）：项目能跑的第一时间起预览给用户看，边写边纠偏——中途纠偏比成片返工省十倍。
+2. **保留用户手工改动**：发现代码在会话之外被改过时不要覆盖，视为有意修改或先询问。
+
+## 版本
+
+SKILL.md → 2.4.0；AGENTS.md 增补第 7/8/9 条；README 文档地图同步。

@@ -40,6 +40,7 @@ v1 解决"怎么做出这种风格"，v2 解决"怎么让观众看懂"，v2.1 �
 | `references/beat-scaffold.md` | **逐拍写法骨架**（v2.2）：130 秒标准片拆成 ~44 个功能位置，每拍的写作任务与写法公式 |
 | `references/image-prompts.md` | **出图提示词规范**（v2.2）：风格后缀六件事、六条规则、一期典型出图清单 |
 | `docs/strict-mode.md` | **严格模式**（v2.2）：两档工作模式（自由/严格）、逐关完成标志、弱模型降级方案 |
+| `references/remotion-track.md` | **Remotion 路线**（v2.4）：把本方法论跑在 Remotion 里的完整对照——心智模型、跑片流程、参数化模板、与质量门的对接 |
 | `render_frames.py --sheet / --stills / --motion` | 三种**看图改图**模式：总览拼图 / 原尺寸静帧 / 转场逐帧拼图，几秒出图 |
 
 ## 📚 方法论地图：每一环都有文档接住
@@ -181,6 +182,7 @@ vibe-knowledge-video/
 │   ├── render-craft.md         # 🆕 v2.1 渲染工程：固定种子、模拟查表、辉光管线、装置写法
 │   ├── rework-scripts.md       # 🆕 v2.1 返工话术 + 八轮分步推进提示词
 │   ├── alternate-worlds.md     # 🆕 v2.1 扩展视觉世界：题材匹配、七项设计清单、节奏经验值
+│   ├── remotion-track.md       # 🆕 v2.4 Remotion 路线：方法论 × React 时间线的完整对照
 │   ├── style-guide.md          # 风格 DNA 完整规范（布局坐标/配色/动效/母题库）
 │   ├── narrative-templates.md  # 8 条原片逐段拆解 + 六段式剧本模板 + 选题公式
 │   └── prompt-brief.md         # 可直接填空的 XML 创作简报模板
