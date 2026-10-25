@@ -161,7 +161,7 @@ async def main():
             idxs = list(range(total))
             if args.to_f is not None or args.from_f:
                 idxs = [i for i in idxs if args.from_f <= i < (args.to_f if args.to_f is not None else total)]
-            q = args.jpeg or 92
+            q = args.jpeg or 95   # 交付级默认 95；预览可手动 --jpeg 92
             cmd = ["ffmpeg", "-y", "-v", "error",
                    "-framerate", str(args.fps), "-f", "image2pipe", "-vcodec", "mjpeg", "-i", "-",
                    "-c:v", "libx264", "-preset", "veryfast", "-crf", str(args.crf),
