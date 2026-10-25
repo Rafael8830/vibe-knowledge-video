@@ -37,6 +37,9 @@ v1 解决"怎么做出这种风格"，v2 解决"怎么让观众看懂"，v2.1 �
 | `docs/common-mistakes.md` | **常见错误对照表**：渲染/剧本/画面/声音/事实五类症状速查 |
 | `docs/publish-guide.md` | **发布指南**：发布前检查清单、48 小时数据复盘、数据差先查叙事 |
 | `docs/topic-seeds.md` | **选题种子库**：五个出题方向、种子题示例、四关检验 |
+| `references/beat-scaffold.md` | **逐拍写法骨架**（v2.2）：130 秒标准片拆成 ~44 个功能位置，每拍的写作任务与写法公式 |
+| `references/image-prompts.md` | **出图提示词规范**（v2.2）：风格后缀六件事、六条规则、一期典型出图清单 |
+| `docs/strict-mode.md` | **严格模式**（v2.2）：两档工作模式（自由/严格）、逐关完成标志、弱模型降级方案 |
 | `render_frames.py --sheet / --stills / --motion` | 三种**看图改图**模式：总览拼图 / 原尺寸静帧 / 转场逐帧拼图，几秒出图 |
 
 ## 📚 方法论地图：每一环都有文档接住
@@ -58,9 +61,9 @@ v1 解决"怎么做出这种风格"，v2 解决"怎么让观众看懂"，v2.1 �
 
 ## 🧭 两条使用路径
 
-**新手（第一次做）**：按 SKILL.md 七步走，不要跳步——先读 `visualization-design.md` 再动笔；分镜表没写完不写代码；每做完两三站就 `--sheet 16` 看图；卡住查 `common-mistakes.md`。第一版画面一定有毛病，按 `quality-gate.md` 修两轮是正常流程。
+**新手（第一次做）**：按 SKILL.md 七步走，不要跳步——先读 `visualization-design.md` 再动笔；分镜表没写完不写代码；每做完两三站就 `--sheet 16` 看图；卡住查 `common-mistakes.md`。第一版画面一定有毛病，按 `quality-gate.md` 修两轮是正常流程。用的模型不算强？读 `docs/strict-mode.md`，照逐拍骨架填空。
 
-**熟手（做过几条）**：直接从 `references/prompt-brief.md` 的简报模板开工；写分镜时开着 `visual-grammar.md` 速查；大题目用 `rework-scripts.md` 的八轮分步推进；想在运营上精进读 `publish-guide.md`。
+**熟手（做过几条）**：直接从 `references/prompt-brief.md` 的简报模板开工；写分镜时开着 `visual-grammar.md` 速查；大题目用 `rework-scripts.md` 的八轮分步推进；想加底图读 `image-prompts.md`；想在运营上精进读 `publish-guide.md`。
 
 ## ❓ FAQ
 
@@ -171,7 +174,9 @@ vibe-knowledge-video/
 │   ├── visualization-design.md # 🆕 讲解设计：配图 vs 讲解、形象提问法、六种呈现动作、何时"不画"
 │   ├── copywriting-rules.md    # 🆕 字幕稿规范：句式工具箱、禁用清单、强调克制规则
 │   ├── structure-bible.md      # 🆕 结构圣经：选题打分、三种骨架、十条叙事定律
-│   ├── visual-grammar.md       # 🆕 v2.1 画面语法：句型→演法对照表、十种转场手法、动效手感
+│   ├── visual-grammar.md       # 🆕 画面语法：句型→演法对照表、十种转场手法、动效手感
+│   ├── beat-scaffold.md        # 🆕 v2.2 逐拍写法骨架：~44 个功能位置与写法公式
+│   ├── image-prompts.md        # 🆕 v2.2 出图提示词规范：风格后缀、六条规则、典型清单
 │   ├── quality-gate.md         # 🆕 质量门：看图改图毛病表、两轮修复、终检门槛、数字纪律
 │   ├── render-craft.md         # 🆕 v2.1 渲染工程：固定种子、模拟查表、辉光管线、装置写法
 │   ├── rework-scripts.md       # 🆕 v2.1 返工话术 + 八轮分步推进提示词
@@ -191,6 +196,7 @@ vibe-knowledge-video/
 │   ├── common-mistakes.md      # 🆕 v2.1 常见错误对照表（五类症状速查）
 │   ├── publish-guide.md        # 🆕 v2.1 发布指南：检查清单 + 48 小时数据复盘
 │   ├── topic-seeds.md          # 🆕 v2.1 选题种子库：出题方向 + 种子题 + 四关检验
+│   ├── strict-mode.md          # 🆕 v2.2 严格模式：两档工作模式 + 降级方案
 │   ├── use-with-other-ai.md    # 豆包/Codex/Cursor/Trae 跨平台使用指南
 │   └── original-analysis/      # 8 条原片逐秒 OCR 记录（风格逆向的一手数据）
 ├── examples/                   # 示例项目（欢迎 PR 你的作品）

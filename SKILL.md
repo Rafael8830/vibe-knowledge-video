@@ -1,7 +1,7 @@
 ---
 name: vibe-knowledge-video
 description: "Vibe知识大赏风格 AI 知识视频制作流水线——把数学/概率/哲学等硬知识拍成电影感短视频。逆向工程自抖音 @Iwanau/@Juno/叁号暗房 的 Claude Opus 5.5 代码生成视频系列。关键词：知识视频、科普视频、Vibe知识大赏、AI视频、代码做视频、抖音知识号、月老的算法、运气的形状、虚无主义视频、Canvas动画视频"
-version: "2.1.0"
+version: "2.2.0"
 author: "CodeBuddy AI"
 created: "2026-10-09"
 updated: "2026-10-25"
@@ -147,6 +147,8 @@ Vibe知识大赏 | 《标题》一句话钩子？
 - `references/structure-bible.md` — **结构圣经**：选题四项打分、三种骨架、标准时间轴、十条叙事定律、悬念/反转/常驻读数的设计方法
 - `references/visual-grammar.md` — **（v2.1）画面语法速查**：常见句型→演法对照表、一屏一件事的分区纪律、常驻元素=报数的仪器、十种转场手法、动效手感六条
 - `references/quality-gate.md` — **质量门**：看图改图毛病对照表、两轮修复流程、终检三遍与门槛表、数字纪律
+- `references/beat-scaffold.md` — **（v2.2）逐拍写法骨架**：130 秒标准片拆成 ~44 个功能位置，每拍的写作任务与写法公式、五条硬规矩
+- `references/image-prompts.md` — **（v2.2）出图提示词规范**：风格后缀六件事、六条规则、一期典型出图清单、风格不一致的补救
 
 **工程层（v2.1）**
 
@@ -166,4 +168,5 @@ Vibe知识大赏 | 《标题》一句话钩子？
 - `docs/common-mistakes.md` — **常见错误对照表**：渲染/剧本/画面/声音/事实五类症状速查
 - `docs/publish-guide.md` — **发布指南**：发布前检查清单、48 小时数据复盘、数据差先查叙事
 - `docs/topic-seeds.md` — **选题种子库**：五个出题方向、种子题示例、四关检验、自建题库方法
+- `docs/strict-mode.md` — **（v2.2）严格模式**：两档工作模式、逐关完成标志、四个亲自把关点、弱模型降级方案
 - `docs/CHANGELOG-v2.md` — v2.x 升级的完整说明（改了什么、为什么、怎么用）
