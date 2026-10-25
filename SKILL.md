@@ -1,7 +1,7 @@
 ---
 name: vibe-knowledge-video
 description: "Vibe知识大赏风格 AI 知识视频制作流水线——把数学/概率/哲学等硬知识拍成电影感短视频。逆向工程自抖音 @Iwanau/@Juno/叁号暗房 的 Claude Opus 5.5 代码生成视频系列。关键词：知识视频、科普视频、Vibe知识大赏、AI视频、代码做视频、抖音知识号、月老的算法、运气的形状、虚无主义视频、Canvas动画视频"
-version: "2.0.0"
+version: "2.1.0"
 author: "CodeBuddy AI"
 created: "2026-10-09"
 updated: "2026-10-25"
@@ -140,12 +140,30 @@ Vibe知识大赏 | 《标题》一句话钩子？
 
 ## 四、参考文件
 
-- `references/visualization-design.md` — **（v2.0）讲解设计**：配图与讲解的分界、概念→形象的六级提问、六种呈现动作、何时"不画"、分镜表七列格式。决定观众能不能看懂，最先读
-- `references/copywriting-rules.md` — **（v2.0）字幕稿规范**：句量句长、句式工具箱、禁用清单、一个比喻一套词汇、强调的克制规则、事实与出处
-- `references/structure-bible.md` — **（v2.0）结构圣经**：选题四项打分、三种骨架、标准时间轴、十条叙事定律、悬念/反转/常驻读数的设计方法
-- `references/quality-gate.md` — **（v2.0）质量门**：看图改图毛病对照表、两轮修复流程、终检三遍与门槛表、数字纪律
+**方法论层（v2.0/v2.1 核心，按顺序读）**
+
+- `references/visualization-design.md` — **讲解设计**：配图与讲解的分界、概念→形象的六级提问、六种呈现动作、何时"不画"、分镜表七列格式。决定观众能不能看懂，最先读
+- `references/copywriting-rules.md` — **字幕稿规范**：句量句长、句式工具箱、禁用清单、一个比喻一套词汇、强调的克制规则、事实与出处
+- `references/structure-bible.md` — **结构圣经**：选题四项打分、三种骨架、标准时间轴、十条叙事定律、悬念/反转/常驻读数的设计方法
+- `references/visual-grammar.md` — **（v2.1）画面语法速查**：常见句型→演法对照表、一屏一件事的分区纪律、常驻元素=报数的仪器、十种转场手法、动效手感六条
+- `references/quality-gate.md` — **质量门**：看图改图毛病对照表、两轮修复流程、终检三遍与门槛表、数字纪律
+
+**工程层（v2.1）**
+
+- `references/render-craft.md` — **渲染工程手册**：render(t) 纯函数与固定种子、模拟预计算查表、辉光管线与 under 层、对数推拉、场景衔接、常见装置写法、性能
+- `references/rework-scripts.md` — **返工话术与分步推进**：八轮分步提示词（每轮有过关标准）+ 按毛病直说的返工话术表 + 验收反问清单
+- `references/alternate-worlds.md` — **扩展视觉世界**：题材→世界匹配、新世界七项设计清单、节奏经验值（每分钟句数/无字幕占比/静止帧比例）、"厂牌"概念
+
+**风格与模板层**
+
 - `references/style-guide.md` — 风格 DNA 完整规范（布局坐标、配色、字体、五区结构、文献再现规范）
 - `references/narrative-templates.md` — 8 条原片的叙事弧逐段拆解 + 通用剧本模板
 - `references/prompt-brief.md` — 可直接填空的 XML 创作简报模板
-- `scripts/` — 渲染 / 配乐 / 合成 / 自检 四件套（v2.0 渲染器新增 `--stills` / `--sheet` / `--motion` 三种看图模式）
-- `docs/CHANGELOG-v2.md` — v2.0 升级的完整说明（改了什么、为什么、怎么用）
+
+**脚本与运营（v2.1）**
+
+- `scripts/` — 渲染 / 配乐 / 合成 / 自检 四件套（渲染器含 `--stills` / `--sheet` / `--motion` 看图模式）
+- `docs/common-mistakes.md` — **常见错误对照表**：渲染/剧本/画面/声音/事实五类症状速查
+- `docs/publish-guide.md` — **发布指南**：发布前检查清单、48 小时数据复盘、数据差先查叙事
+- `docs/topic-seeds.md` — **选题种子库**：五个出题方向、种子题示例、四关检验、自建题库方法
+- `docs/CHANGELOG-v2.md` — v2.x 升级的完整说明（改了什么、为什么、怎么用）

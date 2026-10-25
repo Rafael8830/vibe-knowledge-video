@@ -14,10 +14,17 @@
    - `references/visualization-design.md` — **（先读）讲解设计**：配图与讲解的分界、概念→形象的提问法、六种呈现动作、约 1/5 句子不配画面
    - `references/copywriting-rules.md` — 字幕稿文体：句量句长、句式工具箱、禁用清单、强调的克制规则
    - `references/structure-bible.md` — 选题打分、三种骨架、十条叙事定律、悬念/反转/读数/回扣的设计
+   - `references/visual-grammar.md` — 常见句型→演法对照表、十种转场手法、动效手感（写分镜时随手查）
    - `references/quality-gate.md` — 人工看图改图毛病表、两轮修复流程、终检门槛、数字纪律
+   - `references/render-craft.md` — render(t) 工程纪律：固定种子、模拟查表、辉光管线、对数推拉、常见装置写法
+   - `references/rework-scripts.md` — 分步推进的八轮提示词 + 按毛病直说的返工话术
+   - `references/alternate-worlds.md` — 建立第二套视觉世界的方法与节奏经验值
    - `references/style-guide.md` — 布局坐标、配色、动效规格、视觉母题库
    - `references/narrative-templates.md` — 六段式叙事弧模板 + 8 条原片逐段拆解
    - `references/prompt-brief.md` — 创作简报（Brief）填空模板
+   - `docs/common-mistakes.md` — 常见错误对照表（报错/翻车先查这里）
+   - `docs/publish-guide.md` — 发布前检查清单与数据复盘
+   - `docs/topic-seeds.md` — 选题方向、种子题与四关检验
 3. 写代码前**必须让用户确认剧本和分镜**（第 4 步），不要自作主张直接开做。
 4. 页面模板从 `assets/template.html` 起改，不要从零造轮子。
 5. **（v2.0）数字纪律**：屏上每个数字先由代码算出或查证记入 NOTES.md，禁止先写数再倒推；模拟用固定种子，同一帧渲染两遍结果必须一致；模拟/示意内容在画面上标注。
