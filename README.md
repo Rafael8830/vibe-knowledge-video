@@ -18,6 +18,21 @@
 >
 > **What is this**: A complete AI-agent skill that reproduces the "Vibe Knowledge Awards" style of viral Douyin explainer videos — 100% code-generated (HTML Canvas + synthesized music), no voiceover, bilingual subtitles, cinematic history-document recreations. Say one sentence, get a finished MP4.
 
+## 🆕 v2.0 更新：从"长得像"到"讲得懂"
+
+> 详细说明见 **[docs/CHANGELOG-v2.md](docs/CHANGELOG-v2.md)**。全部为增量新增，v1 用法完全不变。
+
+v1 解决"怎么做出这种风格"，v2 解决"怎么让观众看懂"：
+
+| 新增 | 内容 |
+|---|---|
+| `references/visualization-design.md` | **讲解设计**：配图 vs 讲解的分界、概念→形象的六级提问、六种呈现动作、约 1/5 句子"不画"、一个比喻用到底、分镜表七列格式 |
+| `references/copywriting-rules.md` | **字幕稿文体**：句量句长、句式工具箱、禁用清单、强调的克制规则、事实与出处 |
+| `references/structure-bible.md` | **结构圣经**：选题四项打分、三种骨架、标准时间轴、十条叙事定律、悬念/反转/常驻读数 |
+| `references/quality-gate.md` | **质量门**：看图改图毛病对照表、两轮修复流程、终检三遍、数字纪律（先算后写、固定种子、屏上计数） |
+| `render_frames.py --sheet / --stills / --motion` | 三种**看图改图**模式：总览拼图 / 原尺寸静帧 / 转场逐帧拼图，几秒出图 |
+| SKILL.md / AGENTS.md / prompt-brief.md | 七步流程中接入上述方法：形象先行 → 分镜加呈现动作列 → 人工看图质检关 |
+
 ## 🎬 这种视频长什么样
 
 成片规格（逆向自 8 条原片的实测数据）：
@@ -104,20 +119,25 @@ python3 scripts/qa_check.py final.mp4
 
 ```
 vibe-knowledge-video/
-├── SKILL.md                    # 技能主文件：触发条件 + 七步工作流 + 铁律
+├── SKILL.md                    # 技能主文件：触发条件 + 七步工作流 + 铁律（v2.0 接入讲解设计/质检关）
 ├── AGENTS.md                   # 通用 AI 入口指令（Codex/Cursor/Trae 自动识别）
 ├── references/
+│   ├── visualization-design.md # 🆕 v2.0 讲解设计：配图 vs 讲解、形象提问法、六种呈现动作、何时"不画"
+│   ├── copywriting-rules.md    # 🆕 v2.0 字幕稿规范：句式工具箱、禁用清单、强调克制规则
+│   ├── structure-bible.md      # 🆕 v2.0 结构圣经：选题打分、三种骨架、十条叙事定律
+│   ├── quality-gate.md         # 🆕 v2.0 质量门：看图改图毛病表、两轮修复、终检门槛、数字纪律
 │   ├── style-guide.md          # 风格 DNA 完整规范（布局坐标/配色/动效/母题库）
 │   ├── narrative-templates.md  # 8 条原片逐段拆解 + 六段式剧本模板 + 选题公式
 │   └── prompt-brief.md         # 可直接填空的 XML 创作简报模板
 ├── scripts/
-│   ├── render_frames.py        # Playwright 逐帧渲染器（render(t) 确定性架构）
+│   ├── render_frames.py        # 逐帧渲染器（v2.0 新增 --sheet/--stills/--motion 看图模式）
 │   ├── synth_bgm.py            # numpy 合成配乐（pad/钢琴/kick/shaker/琶音，段落织体）
 │   ├── build_video.sh          # ffmpeg 合成（编码器自动回退 + 响度归一）
 │   └── qa_check.py             # 自动 QA（规格/深色占比/字幕带/节奏/削波）
 ├── assets/
 │   └── template.html           # 标准模板：开箱即改的分镜配置区
 ├── docs/
+│   ├── CHANGELOG-v2.md         # 🆕 v2.0 升级完整说明
 │   ├── use-with-other-ai.md    # 豆包/Codex/Cursor/Trae 跨平台使用指南
 │   └── original-analysis/      # 8 条原片逐秒 OCR 记录（风格逆向的一手数据）
 ├── examples/                   # 示例项目（欢迎 PR 你的作品）

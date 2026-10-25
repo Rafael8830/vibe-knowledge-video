@@ -11,11 +11,17 @@
 
 1. **先完整阅读 `SKILL.md`**——它是七步工作流的总纲（选题核实→剧本→分镜→用户确认→代码实现→渲染合成→自检交付），逐步执行，不可跳步。
 2. 需要风格细节时读 `references/`：
+   - `references/visualization-design.md` — **（先读）讲解设计**：配图与讲解的分界、概念→形象的提问法、六种呈现动作、约 1/5 句子不配画面
+   - `references/copywriting-rules.md` — 字幕稿文体：句量句长、句式工具箱、禁用清单、强调的克制规则
+   - `references/structure-bible.md` — 选题打分、三种骨架、十条叙事定律、悬念/反转/读数/回扣的设计
+   - `references/quality-gate.md` — 人工看图改图毛病表、两轮修复流程、终检门槛、数字纪律
    - `references/style-guide.md` — 布局坐标、配色、动效规格、视觉母题库
    - `references/narrative-templates.md` — 六段式叙事弧模板 + 8 条原片逐段拆解
    - `references/prompt-brief.md` — 创作简报（Brief）填空模板
 3. 写代码前**必须让用户确认剧本和分镜**（第 4 步），不要自作主张直接开做。
 4. 页面模板从 `assets/template.html` 起改，不要从零造轮子。
+5. **（v2.0）数字纪律**：屏上每个数字先由代码算出或查证记入 NOTES.md，禁止先写数再倒推；模拟用固定种子，同一帧渲染两遍结果必须一致；模拟/示意内容在画面上标注。
+6. **（v2.0）交付前的人工质检**：用 `render_frames.py` 的 `--sheet` / `--stills` / `--motion` 看图，按 `quality-gate.md` 毛病表逐条查，至少修两轮；`qa_check.py` 通过 ≠ 可以交片。
 
 ## 环境准备（渲染合成前执行一次）
 
@@ -51,6 +57,15 @@ python3 scripts/synth_bgm.py bgm.wav --bpm 77 --duration 130 \
   --sections "0,8,pad;8,30,piano;30,90,full;90,105,arp;105,120,piano;120,130,outro"
 bash scripts/build_video.sh out_frames/ bgm.wav final.mp4
 python3 scripts/qa_check.py final.mp4   # 六维自检，任何一项 < 8 分须修复重渲
+```
+
+看图改图命令（v2.0，第 7 步人工质检用，详见 `references/quality-gate.md`）：
+
+```bash
+python3 scripts/render_frames.py index.html review/ --duration 130 --sheet 16      # 全片均匀 16 帧总览图
+python3 scripts/render_frames.py index.html review/ --duration 130 --sheet 3.5 18 62  # 指定时刻总览图
+python3 scripts/render_frames.py index.html review/ --duration 130 --stills 18.3 62.4 # 原尺寸静帧
+python3 scripts/render_frames.py index.html review/ --duration 130 --motion 61.5 64   # 转场区间 12 帧拼图
 ```
 
 ## 能力边界（对用户诚实）
