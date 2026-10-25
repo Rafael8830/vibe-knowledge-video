@@ -46,10 +46,31 @@ async def capture_frames(page, outdir, times, fps, prefix="f"):
         outs.append((t, path))
     return outs
 
+async def render_page(page, idxs, args, outdir, fps):
+    """在一块已打开的浏览器页面里渲染给定帧序列。返回完成数。"""
+    ext = "jpg" if (args.jpeg or args.pipe) else "png"
+    shot_kw = {"type": "jpeg", "quality": args.jpeg or 92} if (args.jpeg or args.pipe) else {}
+    t0 = time.time(); n_done = 0
+    for fi in idxs:
+        t = fi / fps
+        await page.evaluate(f"window.render({t})")
+        if args.pipe:
+            data = await page.screenshot(**shot_kw)
+            page._pipe_stream.write(data)      # 由调用方挂上的 ffmpeg stdin
+        elif args.resume and os.path.exists(os.path.join(outdir, f"f{fi:06d}.{ext}")):
+            continue
+        else:
+            await page.screenshot(path=os.path.join(outdir, f"f{fi:06d}.{ext}"), **shot_kw)
+        n_done += 1
+        if n_done % 300 == 0 or n_done == len(idxs):
+            el = time.time() - t0
+            print(f"  已渲染 {n_done}/{len(idxs)} 帧  ({el:.0f}s, {n_done/max(el,.01):.1f} 帧/s)", flush=True)
+    return n_done
+
 async def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("html", help="index.html 路径")
-    ap.add_argument("outdir", help="帧输出目录")
+    ap.add_argument("outdir", nargs="?", default="frames", help="帧输出目录（--pipe 模式下可省略）")
     ap.add_argument("--fps", type=int, default=30)
     ap.add_argument("--duration", type=float, required=True, help="总时长（秒）")
     ap.add_argument("--scale", type=float, default=1.0, help="deviceScaleFactor（2=超采样抗锯齿）")
@@ -61,6 +82,21 @@ async def main():
                     help="拼总览图：一个整数 N=均匀 N 帧；或若干秒时刻，如 --sheet 3.5 18 62")
     ap.add_argument("--motion", nargs=2, type=float, metavar=("A", "B"), default=None,
                     help="取 [A,B] 秒区间均匀 12 帧拼图，检查转场，如 --motion 61.5 64")
+    # v2.3 分段与格式
+    ap.add_argument("--from", dest="from_f", type=int, default=0, metavar="N",
+                    help="起始帧号（含），配合 --to 做多进程分段渲染")
+    ap.add_argument("--to", dest="to_f", type=int, default=None, metavar="N",
+                    help="结束帧号（不含）")
+    ap.add_argument("--jpeg", type=int, default=0, metavar="Q",
+                    help="输出 JPEG（质量 Q，如 92）：编码比 PNG 快 3 倍，适合中间帧")
+    # v2.3 提速三件套
+    ap.add_argument("--jobs", type=int, default=0, metavar="N",
+                    help="N 进程并行渲染（把帧区间切块，每块一个浏览器）。内存紧张时用 1-2")
+    ap.add_argument("--resume", action="store_true",
+                    help="跳过输出目录里已存在的帧（中断后续渲）")
+    ap.add_argument("--pipe", metavar="OUT.mp4",
+                    help="不落盘：帧直接流入 ffmpeg 编码成 MP4（默认 JPEG 管道，最快路径）")
+    ap.add_argument("--crf", type=int, default=18, help="--pipe 模式的 x264 CRF（默认 18）")
     args = ap.parse_args()
 
     from playwright.async_api import async_playwright
@@ -118,26 +154,61 @@ async def main():
             await browser.close()
             return
 
+        # -------- v2.3 --pipe：帧不落盘，直通 ffmpeg --------
+        if args.pipe:
+            import subprocess
+            total = int(args.duration * args.fps)
+            idxs = list(range(total))
+            if args.to_f is not None or args.from_f:
+                idxs = [i for i in idxs if args.from_f <= i < (args.to_f if args.to_f is not None else total)]
+            q = args.jpeg or 92
+            cmd = ["ffmpeg", "-y", "-v", "error",
+                   "-framerate", str(args.fps), "-f", "image2pipe", "-vcodec", "mjpeg", "-i", "-",
+                   "-c:v", "libx264", "-preset", "veryfast", "-crf", str(args.crf),
+                   "-pix_fmt", "yuv420p", "-movflags", "+faststart", args.pipe]
+            proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+            page._pipe_stream = proc.stdin
+            t0 = time.time()
+            n = await render_page(page, idxs, args, args.outdir, args.fps)
+            page._pipe_stream.close(); proc.wait()
+            print(f"完成（pipe）：{n} 帧 → {args.pipe}  用时 {time.time()-t0:.0f}s")
+            await browser.close()
+            return
+
+        # -------- v2.3 --jobs：多进程并行（每进程渲一段） --------
+        if args.jobs and args.jobs > 1:
+            import math, subprocess as sp, sys as _sys
+            total = int(args.duration * args.fps)
+            per = math.ceil(total / args.jobs)
+            procs = []
+            for j in range(args.jobs):
+                a, b = j * per, min(total, (j + 1) * per)
+                if a >= b: break
+                cmd = [_sys.executable, os.path.abspath(__file__), args.html, args.outdir,
+                       "--fps", str(args.fps), "--duration", str(args.duration),
+                       "--from", str(a), "--to", str(b), "--jobs", "0"]
+                if args.jpeg: cmd += ["--jpeg", str(args.jpeg)]
+                if args.resume: cmd += ["--resume"]
+                if args.scale != 1.0: cmd += ["--scale", str(args.scale)]
+                procs.append(sp.Popen(cmd))
+                print(f"  worker {j}: 帧 {a}-{b}")
+            codes = [p.wait() for p in procs]
+            if any(codes): print("[警告] 有 worker 失败，可用 --resume 补渲", file=sys.stderr)
+            print(f"完成：{args.jobs} 进程并行 → {args.outdir}")
+            return
+
         # -------- 原有全量/预览渲染（v1 行为不变） --------
         total = int(args.duration * args.fps)
         if args.preview > 0:
             idxs = [int(i * (total - 1) / (args.preview - 1)) for i in range(args.preview)] if args.preview > 1 else [0]
         else:
             idxs = range(total)
-
-        t0 = time.time()
-        n_done = 0
-        n_total = len(idxs) if not isinstance(idxs, range) else total
-        for fi in idxs:
-            t = fi / args.fps
-            await page.evaluate(f"window.render({t})")
-            await page.screenshot(path=os.path.join(args.outdir, f"f{fi:06d}.png"))
-            n_done += 1
-            if n_done % 150 == 0 or n_done == n_total:
-                el = time.time() - t0
-                print(f"  已渲染 {n_done}/{n_total} 帧  ({el:.0f}s)", flush=True)
+        if args.to_f is not None or args.from_f:
+            idxs = [i for i in idxs if args.from_f <= i < (args.to_f if args.to_f is not None else total)]
+        ext = "jpg" if args.jpeg else "png"
+        n = await render_page(page, idxs, args, args.outdir, args.fps)
         await browser.close()
-        print(f"完成：{n_done} 帧 → {args.outdir}")
+        print(f"完成：{n} 帧 → {args.outdir}")
 
 if __name__ == "__main__":
     asyncio.run(main())
