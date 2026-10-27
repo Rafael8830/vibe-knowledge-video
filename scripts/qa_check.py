@@ -7,7 +7,7 @@ qa_check.py — Vibe知识大赏 成片自检（不过不出门）
 检查项（逆向自原片风格规范）:
   A. 规格: 分辨率/帧率/时长/音轨存在
   B. 画面: 深色背景占比（去默认白底）、每帧亮度中带（内容居中度）
-  C. 节奏: 抽帧序列的结构变化率（每 2-4s 应有新东西 → 相邻样本帧差异）
+  C. 节奏: 抽帧序列的结构变化率（低变化仅提示人工复核，允许阅读停顿与留白）
   D. 字幕: 底部 87% 高度区域是否有高对比文字带（OCR 验证，需 tesseract+chi_sim）
   E. 音频: BGM 响度/时长与视频匹配、无爆音（削波检测）
 
@@ -58,6 +58,7 @@ def main():
     args = ap.parse_args()
 
     issues = []
+    review_notes = []
     info = ffprobe_info(args.video)
     vstreams = [s for s in info['streams'] if s['codec_type']=='video']
     astreams = [s for s in info['streams'] if s['codec_type']=='audio']
@@ -106,7 +107,7 @@ def main():
         if avg_dark < 0.5: issues.append(f"[画面] 深色背景占比仅 {avg_dark:.0%}，偏离深蓝黑风格")
         if sub_rate < 0.5: issues.append(f"[字幕] 仅 {sub_rate:.0%} 抽帧检测到底部字幕带——旁白字幕可能缺失或过小")
         if changes and np.mean(changes) < 3:
-            issues.append("[节奏] 相邻 2 秒帧差异过低——存在长时间静止画面（规范: 每 2-4 秒必须有新元素）")
+            review_notes.append("[节奏待复核] 相邻 2 秒平均帧差较低；检查信息与情绪是否推进，阅读停顿和有意留白不自动判失败")
 
         # 底部字幕 OCR 抽查
         if fulls:
@@ -123,7 +124,7 @@ def main():
         if changes:
             still = [i*2 for i, d in enumerate(changes) if d < 1.0]
             if len(still) > len(changes)*0.3:
-                issues.append(f"[节奏] 静止段过多: {still[:8]}...（时间点/秒）")
+                review_notes.append(f"[节奏待复核] 低变化区间起点: {still[:8]}... 秒；结合分镜判断，不强制补微动效")
 
     # 音频检查
     if astreams:
@@ -141,6 +142,10 @@ def main():
         if rms < 0.02: issues.append("[音频] BGM 过轻，几乎听不见")
 
     print()
+    if review_notes:
+        print("人工复核提示（不等同于失败）:")
+        for note in review_notes:
+            print(f"  {note}")
     if issues:
         print("="*56)
         print("最严重问题（按顺序修复后重新渲染）:")

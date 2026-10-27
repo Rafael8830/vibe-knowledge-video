@@ -14,6 +14,7 @@
    - `references/style-guide.md` — 布局坐标、配色、动效规格、视觉母题库
    - `references/narrative-templates.md` — 六段式叙事弧模板 + 8 条原片逐段拆解
    - `references/prompt-brief.md` — 创作简报（Brief）填空模板
+   - `references/rhythm-and-transitions.md` — 首秒视觉焦点、半句卡点、同元素交接和短样验收
 3. 写代码前**必须让用户确认剧本和分镜**（第 4 步），不要自作主张直接开做。
 4. 页面模板从 `assets/template.html` 起改，不要从零造轮子。
 
@@ -47,6 +48,7 @@ ffmpeg -version  # 验证可用
 
 ```bash
 python3 scripts/render_frames.py index.html out_frames/ --fps 30 --duration 130
+# 可选合成分支；使用现成配乐时跳过合成，先按实际乐句确定成片拍点
 python3 scripts/synth_bgm.py bgm.wav --bpm 77 --duration 130 \
   --sections "0,8,pad;8,30,piano;30,90,full;90,105,arp;105,120,piano;120,130,outro"
 bash scripts/build_video.sh out_frames/ bgm.wav final.mp4

@@ -1,5 +1,7 @@
 # Vibe 知识大赏 · AI 知识视频制作 Skill
 
+> 本分支基于 [xiazhuo123456789/vibe-knowledge-video](https://github.com/xiazhuo123456789/vibe-knowledge-video) 修改，结合实际视频制作经验，补充了开场视觉焦点、声画卡点和转场规范。感谢原作者的开源分享！
+
 <p align="center">
   <b>把数学、概率、哲学等硬知识，拍成电影感的抖音知识大片</b><br>
   纯代码生成 · 无配音 · 双语字幕 · 历史文献再现 · 动画模拟推演
@@ -8,7 +10,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/style-Vibe%E7%9F%A5%E8%AF%86%E5%A4%A7%E8%B5%8F-0A0A1E" alt="style">
   <img src="https://img.shields.io/badge/render-Canvas%202B%20%2B%20render(t)-C9A96A" alt="render">
-  <img src="https://img.shields.io/badge/audio-numpy%20synth%20BGM-76BPM" alt="audio">
+  <img src="https://img.shields.io/badge/audio-existing%20or%20synthesized-C9A96A" alt="audio">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="license">
 </p>
 
@@ -16,7 +18,7 @@
 
 > **这是什么**：一套完整的 Claude / AI Agent 技能（Skill），逆向工程自抖音「Vibe知识大赏」系列爆款知识视频（由 @Iwanau / @Juno / 叁号暗房 用 Claude Opus 5.5 代码生成）。装上它，对 AI 说一句话，就能从选题走到成片 MP4 + 抖音发布文案。
 >
-> **What is this**: A complete AI-agent skill that reproduces the "Vibe Knowledge Awards" style of viral Douyin explainer videos — 100% code-generated (HTML Canvas + synthesized music), no voiceover, bilingual subtitles, cinematic history-document recreations. Say one sentence, get a finished MP4.
+> **What is this**: A complete AI-agent skill that reproduces the "Vibe Knowledge Awards" style of viral Douyin explainer videos — code-generated HTML Canvas visuals with existing or synthesized music, no voiceover, bilingual subtitles, cinematic history-document recreations. Say one sentence, get a finished MP4.
 
 ## 🎬 这种视频长什么样
 
@@ -26,9 +28,9 @@
 |---|---|
 | 画幅 | 1920×1080 横屏，30fps |
 | 时长 | 2:00–2:45 |
-| 声音 | **无旁白配音**，纯器乐 BGM 76–78 BPM（沉静纪录片节奏，numpy 从零合成） |
+| 声音 | **无旁白配音**，纯器乐 BGM；现成或合成均可，按实际乐句与重拍编排；76–78 BPM 为沉静合成分支参考 |
 | 画面 | 深蓝黑底 `#0A0A1E`，五区布局（水印/顶标签/中央动画/注释带/双语字幕带） |
-| 密度 | 逐秒运动均值 3.97，静止秒 < 25% —— 画面必须一直在动 |
+| 密度 | 动作推进信息与情绪，允许阅读停顿和留白；历史运动数据不作为固定达标线 |
 | 严谨 | 结尾必有学术引用 + 免责声明，历史图示必标"示意图" |
 
 六段叙事弧：**冷开场钩子 → 历史锚点（真实文献再现）→ 机制动画模拟 → 反直觉转折 → 现实落点 → 声明+引用收尾**
@@ -39,7 +41,7 @@
 
 ```bash
 # 方式一：克隆到技能目录
-git clone https://github.com/<你的用户名>/vibe-knowledge-video.git
+git clone --branch rafael-v1.1 https://github.com/Rafael8830/vibe-knowledge-video.git
 cp -r vibe-knowledge-video ~/.codebuddy/skills/
 
 # 方式二：项目级安装
@@ -87,7 +89,7 @@ cp -r vibe-knowledge-video /path/to/your/project/.codebuddy/skills/
 # 1. 逐帧渲染（页面需暴露 window.render(t) 纯时间函数）
 python3 scripts/render_frames.py index.html out_frames/ --fps 30 --duration 130
 
-# 2. 合成 77BPM 小调 BGM（织体分段对齐分镜章节）
+# 2. 可选：合成 77BPM 小调 BGM；现成配乐跳过此步，先分析实际乐句
 python3 scripts/synth_bgm.py bgm.wav --bpm 77 --duration 130 \
   --sections "0,8,pad;8,30,piano;30,90,full;90,105,arp;105,120,piano;120,130,outro"
 

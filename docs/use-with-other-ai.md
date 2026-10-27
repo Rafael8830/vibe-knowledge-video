@@ -29,7 +29,7 @@ codex "用这个仓库的技能，做一条《辛普森悖论》的知识视频"
 Codex 会自动读取仓库根的 `AGENTS.md`：先装依赖，再按 `SKILL.md` 的七步流程走，需要你确认剧本分镜后开始渲染。GitHub 源同理：
 
 ```bash
-git clone https://github.com/xiazhuo123456789/vibe-knowledge-video.git
+git clone --branch rafael-v1.1 https://github.com/Rafael8830/vibe-knowledge-video.git
 ```
 
 > 首次使用建议先跑一次环境准备（见 `AGENTS.md` 里的安装命令），避免沙箱联网装依赖超时。
@@ -62,6 +62,7 @@ playwright install chromium
 
 # 渲染合成（在仓库目录下）
 python3 scripts/render_frames.py index.html out_frames/ --fps 30 --duration 130
+# 仅合成分支执行下一条；现成配乐先分析乐句，字幕、动作与音效按成片拍点编排
 python3 scripts/synth_bgm.py bgm.wav --bpm 77 --duration 130 \
   --sections "0,8,pad;8,30,piano;30,90,full;90,105,arp;105,120,piano;120,130,outro"
 bash scripts/build_video.sh out_frames/ bgm.wav final.mp4

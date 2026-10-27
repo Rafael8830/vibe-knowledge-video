@@ -12,8 +12,9 @@
     3. 深蓝黑底 #0A0A1E，白字 #EAEAF2；Juno 纸艺风: 金 #C9A96A + 米白纸 #EDE4D3 + 红印章 #B53A2F
     4. 每句旁白 = 中文主句 + 英文斜体小字（双语标配）
     5. 15-20 秒处落《片名》标题卡；缓动 easeInOut/弹簧，禁止匀速
-    6. 每句字幕停留 ≥ 2.5s；同一画面 ≤ 4s 必须有新元素（画面密度实测均值 3.97）
-  使用: 替换 CFG / SUBTITLES / SECTIONS / TITLE_CARD，在 drawScene 里实现中央动画。
+    6. 完整句按双语阅读实测安排；允许阅读停顿和情绪留白，不强制持续微动
+    7. 第一秒有明确焦点；重点卡点共用 CUES；转场承接元素独立持续绘制
+  使用: 替换 CFG / SUBTITLES / CUES / SECTIONS / TITLE_CARD，在 drawScene 里实现中央动画。
 -->
 <title>Vibe知识大赏 · 模板</title>
 <style>
@@ -79,8 +80,60 @@ const CFG = {
 const SUBTITLES = [
   [0.0, 4.0,  '假如这一生，你会遇见<em>10个</em>可能的人', 'Say you will meet 10 people in your life.'],
   [4.0, 8.0,  '他们一个一个出现，错过了，就不能回头', 'They arrive one at a time. Let one go, and they\'re gone.'],
-  // ... 按剧本填充，每句 ≥ 2.5s
+  // ... 普通完整句通常留 ≥ 2.5s，以手机双语阅读实测调整
 ];
+
+/* VIBE_TIMING_BEGIN — 可复制到单文件动画中，无计时器、无帧间状态 */
+const VibeTiming = (() => {
+  const frameTime = (seconds, fps = 30) => {
+    if (!Number.isFinite(seconds) || !Number.isFinite(fps) || fps <= 0) throw new Error('时间和帧率必须有效');
+    return Math.round(seconds * fps) / fps;
+  };
+  const progress = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+  const smooth = u => u * u * (3 - 2 * u);
+  function cue(t, event, fps = 30) {
+    const start = frameTime(event.start, fps), reveal = frameTime(event.reveal, fps), end = frameTime(event.end, fps);
+    if (!(start < reveal && reveal < end)) throw new Error('节奏事件量化后需满足 start < reveal < end');
+    const active = t >= start && t < end;
+    const revealed = active && t >= reveal;
+    return { start, reveal, end, active, revealed,
+      phase: !active ? (t < start ? 'before' : 'after') : (revealed ? 'reveal' : 'setup'),
+      zh: active ? event.before + (revealed ? event.after : '') : '',
+      en: active ? (event.beforeEn || '') + (revealed ? (event.afterEn || '') : '') : '',
+      actionPeak: frameTime(event.actionPeak ?? event.reveal, fps),
+      sfxStart: frameTime(event.sfxStart ?? event.reveal, fps) };
+  }
+  function transfer(t, event, fps = 30) {
+    const start = frameTime(event.start, fps), handoff = frameTime(event.handoff, fps), end = frameTime(event.end, fps);
+    if (!(start < handoff && handoff < end)) throw new Error('转场量化后需满足 start < handoff < end');
+    return { start, handoff, end,
+      outgoing: 1 - smooth(progress(t, start, handoff)),
+      carrier: smooth(progress(t, start, end)),
+      incoming: smooth(progress(t, handoff, end)) };
+  }
+  return Object.freeze({ frameTime, cue, transfer });
+})();
+/* VIBE_TIMING_END */
+window.VibeTiming = VibeTiming;
+
+/* 重点句单一时间源，普通句仍用 SUBTITLES；中英文后半句同时揭晓。
+   示例（另一个主题也只替换内容和实测时间，不复用某片的拍点）：
+   { id:'turn', start:10, reveal:12, end:16, before:'只改一件事，', after:'结果却不同。',
+     beforeEn:'Change one thing, ', afterEn:'and the outcome changes.', actionPeak:12, sfxStart:12 }
+   drawScene 从同一 event.actionPeak / event.reveal 编排动作，到点时关键词应已可见。
+   动画不直接播放声音；音效程序读取 exportCueSheet() 导出的 JSON 排布音效。
+*/
+const CUES = [];
+window.exportCueSheet = () => CUES.map(event => {
+  const state = VibeTiming.cue(event.start, event, CFG.fps);
+  return { ...event, start:state.start, reveal:state.reveal, end:state.end,
+    actionPeak:state.actionPeak, sfxStart:state.sfxStart };
+});
+
+/* 同元素转场用法：state=VibeTiming.transfer(t,{start,handoff,end},CFG.fps)。
+   旧场非承接元素乘 state.outgoing，新场非承接元素乘 state.incoming；
+   承接元素单独画一次，用 state.carrier 插值位置/尺寸/形态，调用覆盖完整区间。
+*/
 
 /* 标题卡: [起秒, 止秒, 片名, 副标题, 英文副标题]。约 15-20s 处 */
 const TITLE_CARD = [14, 20, '《第几个人》', '什么时候，该停止相亲？', 'When to Stop Looking'];
@@ -182,8 +235,14 @@ function drawOverlay(t){
   const inTitle = t >= TITLE_CARD[0] && t < TITLE_CARD[1];
   // 双语字幕
   const sub = SUBTITLES.find(([a,b]) => t >= a && t < b);
+  const event = CUES.find(item => VibeTiming.cue(t, item, CFG.fps).active);
   const el = $('subtitle'), elEn = $('subtitle-en');
-  if (sub && !inTitle) {
+  if (event && !inTitle) {
+    const state = VibeTiming.cue(t, event, CFG.fps);
+    // textContent 避免把普通文案当 HTML；揭晓帧直接可读，不从透明开始延迟答案。
+    el.textContent = state.zh; elEn.textContent = state.en;
+    el.style.opacity = 1; el.style.transform = 'translateY(0px)'; elEn.style.opacity = .9;
+  } else if (sub && !inTitle) {
     const [a, b, zh, en] = sub;
     const kIn  = easeInOut(clamp((t-a)/0.45, 0, 1));
     const kOut = 1 - easeInOut(clamp((t-(b-0.4))/0.4, 0, 1));
