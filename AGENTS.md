@@ -24,6 +24,8 @@
    - `references/style-guide.md` — 布局坐标、配色、动效规格、视觉母题库
    - `references/narrative-templates.md` — 六段式叙事弧模板 + 8 条原片逐段拆解
    - `references/prompt-brief.md` — 创作简报（Brief）填空模板
+   - `references/rhythm-and-transitions.md` — 首秒视觉焦点、半句卡点、同元素交接和短样验收
+   - `references/emotion-worlds.md` — 可选的 13–50 秒情绪命名短片扩展，非默认风格替换
    - `docs/common-mistakes.md` — 常见错误对照表（报错/翻车先查这里）
    - `docs/publish-guide.md` — 发布前检查清单与数据复盘
    - `docs/topic-seeds.md` — 选题方向、种子题与四关检验
@@ -66,6 +68,7 @@ ffmpeg -version  # 验证可用
 
 ```bash
 python3 scripts/render_frames.py index.html out_frames/ --fps 30 --duration 130
+# 可选合成分支；使用现成配乐时跳过合成，先按实际乐句确定成片拍点
 python3 scripts/synth_bgm.py bgm.wav --bpm 77 --duration 130 \
   --sections "0,8,pad;8,30,piano;30,90,full;90,105,arp;105,120,piano;120,130,outro"
 bash scripts/build_video.sh out_frames/ bgm.wav final.mp4
